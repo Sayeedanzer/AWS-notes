@@ -1,0 +1,14 @@
+Steps to create EFS file system in aws
+
+Step1: create a security group with ssh inbound rules
+1a) modify the security group and add efs and attach 
+it to the newly created security group
+Step2: go to servcies and search efs and open up
+Step3: Configure file system settings, remove all the default security
+       groups(later on add nfs protocol and assign ec2 instance security group)
+Step4: Select the security group which you have created
+Step5: press next
+Step6: give the name and choose defaults
+step7: efs will get created
+
+Now create the ec2 instance, create a new security group

@@ -1,0 +1,27 @@
+Command structure
+
+The AWS CLI uses a multipart structure on the command
+line that must be specified in this order:
+
+The base call to the aws program.
+
+The top-level command, which typically corresponds to
+an AWS service supported by the AWS CLI.
+
+The subcommand that specifies which operation to 
+perform.
+
+General AWS CLI options or parameters required by the
+operation. You can specify these in any order as long as they follow the first three parts. If an exclusive parameter is specified multiple times, only the last value applies.
+
+aws <command> <subcommand> [options and parameters]
+aws s3 ls
+aws s3 mb s3://mybucket --region us-west-1
+aws s3 ls s3://mybucket
+aws s3 cp test.txt s3://mybucket/test2.txt
+aws s3 cp s3://mybucket/test.txt s3://mybucket/test2.txt
+aws s3 rm s3://mybucket/test2.txt
+aws s3 rm s3://mybucket --recursive
+aws ec2 run-instances --image-id ami-0abcdef1234567890 --instance-type t2.micro --key-name MyKeyPair
+aws ec2 describe-instances
+aws ec2 terminate-instances --instance-ids i-1234567890abcdef0

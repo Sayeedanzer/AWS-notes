@@ -1,0 +1,270 @@
+AWS CLI  ( Command line Interface )
+------------------------------------------------
+
+To connect from CLI, We need to provide  Access Keys and secret key.
+
+Observation, in IAM dashboard,  root access keys are deleted!!!
+
+
+Generation of root access keys
+-----------------------------------------
+Under Quick Links --------> My access key
+Create new Access key
+
+
+Access Key ID:
+
+Secret Access Key:
+
+
+
+
+
+As keys are ready, we can access to AWS from CLI
+
+We need to download and install AWS CLI tool.
+
+Search "Aws cli tool for windows"  in google
+select the 1st link ( docs.amazon.com )
+
+select  " Download the AWS CLI MSI installer for windows 64 bit"
+download and run the file.
+Once the CLI is intalled, we can see it in control panel -- uninstall program 
+We can see "AWS Command line interface" ( Just observation )
+
++++++++++=
+Open command prompt
+
+> aws configure
+AWS access key ID  [*****]:    enter access key ID from file downloaded 
+AWS secret Access key [***  ]: enter secret key ID from file downloaded  
+Default region name :ap-south-1
+
+
+Note: ap-south-1  ( Is nothing but region name of mumbai.
+		We can get this information from google ) 
+Default region is north virginia
+
+Default output format : text
+
+We get the prompt. ( We have logged in )
+>  
+
++++++++++++++++++++++++
+From the console,  create 2 buckets.
+
+We can see the list of buckets from command line
+
+search in google " aws s3 commands"
+( Note: we do not need to remember commands )
+under available commands
+select ls  ( open in new window )
+
+under Examples
+aws s3 ls
+
+Run the command
+We can see the buckets!!!
+
+++++++++++++++
+under available commands
+select mb  ( open in new window )  (mb - make bucket )
+
+Under Examples
+aws s3 mb s3://mybucket         ( mybucker is the name )
+
+Run the command  
+
+We can see the new bucket in console!!!
+
++++++++++++++++++++
+I want to upload the file to the bucket
+
+under available commands
+select cp  ( open in new window )  (mb - make bucket )
+
+copying the local file to S3
+aws s3 cp test.txt   s3://mybucket7654376
+
+( test.txt should be available in current path )
+
+We can see the file available in the bucket in console.
+
+++++++++++++++++++
+Creating user from command line
+--------------------------------
+Search in google " aws iam commands"
+
+Available commands
+click on create-user
+Under Examples
+To create an IAM  user
+aws iam create-user --user-name Bob
+> aws iam create-user --user-name abdul
+
+copy and paste
+
+Now, user is created from the command line.
+We can also check from console.
+
+++++++++++
+
+We have 1000's of commands in AWS
+Most of the opearations we can also do it from CLI
+
+We do not need to remember the commands
+
+We have experienced AWS CLI from windows machine.
+
+++++++++++
+
+++++++++++
+
+
+Lets learn how can we work with AWS CLI  on linux?
+
+Lets create a new EC2 machine of linux
+
+Services --->EC2 --> Amazon linux --Next --> Next
+Security group  ( open SSH and HTTP ) -- review and launch-> Launch.
+
+Connect to machine using putty
+
+
+
+Now, we need to install AWS CLI  tool on linux
+Note:  All EC2 machine comes with AWS CLI installed on it.
+
+so, we do need to install AWS CLI on the machine, which we have created.
+
+$  sudo su 
+# yum update -y
+#  aws configure
+
+AWS access key ID  [*****]:    enter access key ID from file downloaded 
+AWS secret Access key [***  ]: enter secret key ID from file downloaded  
+Default region name :ap-south-1
+
+
+Note: ap-south-1  
+
+Default output format :   just hit enter
+
+#
+
+Lets create group
+--------------------
+# aws iam create-group  --group-name  devops
+
+Lets create user
+
+# aws iam create-user --user-name raj
+
+( We can verify users and group from console )
+
+++++++++++++
+
+
+++++++++++++
+IAM Roles
+--------------
+
+Role is replacement of credentials.
+
+Step 1: Creating role
+------------------
+source of the role is EC2  and destination as S3FullAccess
+
+How to create role?
+IAM Dashboard
+roles --> create role
+
+Select  EC2  ( source ) ---> Next permissions
+select check box AmazonS3FullAccess  ( policy name ) ---> Next: Tags
+Next --> ROle name : Myrole_Ec2-S3 ---> Create role
+
+Step 2: Launch EC2 Machine and attach role to the machine
+
+Services -- Ec2 --> Launch instance  
+In Step 3:  IAM Role:  EC2-admin-access   ( Select our role name )
+Next: Add Storage ---> Security ( open SSH and HTTP ) --> Review and launch
+download key pair --> View instances
+
+Connect to the machine using putty
+-----------------------------------------------
+
+As we have attached role to EC2 machine
+
+
+we do not require aws configure commands,
+we do not require access key
+we do not require secret key
+
+$ sudo su
+# yum update -y
+
+# aws s3 ls
+We see the list of all the buckets.
+
+Lets create user
+----------------------
+# aws iam create-user --user-name amit
+Is it possible?
+
+An error occurred ( AccessDenied )
+
+Can we see the list of buckets
+# aws  s3 ls
+
+Yes!!
+
+Now, I want to give IAM Access also
+
+select our role -- > Attach policies --> search for iam
+Select check box  IAMFullAccess -- Attach policy
+
+Now, our role is having two policies
+
+So, can we create new users now
+#  aws iam create-user   --user-name  test
+Yes!!
+
+++++++++
+I want to detach the role from EC2 machine
+Select the EC2 machine --> Actions --> Instance settings
+Attach/Replace IAM Role  ---> IAM Role - No Role
+Apply --> Yes, Detach --> Close
+
+Now, 
+If you try to create new user
+
+# aws iam create-user   --user-name  test1
+
+Unable to locate credentials.
+
+Now, lets attach role to EC2 machine  again
+---------------------------------------------
+
+Select the EC2 machine --> Actions --> Instance settings
+Attach/Replace IAM Role  ---> IAM Role - Ec2-admin-access
+Apply -->  Close
+
+Now , create user works
+# aws iam create-user   --user-name  test1
+
+So, Roles are replacement of credentials!!
+Note:  Roles can be attached to EC2 machines only.
+Not to our personal laptops.
+
+Deletion steps
+--------------------
+1) Delete root  access Key  
+Manage security credentials --> Continue to security credentials--> 
+Access Keys --> Delete -- Yes
+2) Delete all groups
+3) Delete all users
+4) Delete IAM role
+5) Delete buckets
+5) Delete EC2 machines
+
+aws ec2 run-instances --image-id ami-xxxxxxxx --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-903004f8 --subnet-id subnet-6e7f829e

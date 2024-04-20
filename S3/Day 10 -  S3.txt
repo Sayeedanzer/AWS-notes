@@ -1,0 +1,195 @@
+
+Topics
+-----------
+1) Versioning
+2) Static  website hsoting
+3) classes/ tiers
+4) Cross region replication
+5) Transfer Accelaration
+6) encryption
+7) tags
+8) metadata
+9) ACL
+10) Bucket policies
+11) Life cycle management
+
+
++++++++++++++++++++++++++++++++++++++
+
+
+++++++++++++++
+
+
+CRR   ( Cross region replication ) 
+-----------------------------------------
+Lets say, we have two buckets ( 1st bucket in mumbai
+			   2nd  bucket in sydney )
+
+We we upload the object in mumbai, 
+ the object should also be available in sydney ).
+
+As we are replicating an object in another region, 
+it is called cross region replication.
+
+vice-versa will not happen.
+If we delete object in mumbai, it will not be deleted in sydney.
+If we edit object in mumbai, it will not de edited in sydney.
+
+Lets  create  bucket
+bucket name -  mumbai-sfsdfgds
+Region - mumbai
+Next ----> Next ---> uncheck block all public access
+Next ---> create bucket.
+
+
+Lets create 2nd bucket in sydney
+Lets  create  bucket
+bucket name -  sydney-fhgfhfd
+Region - sydney
+Next ----> Next ---> uncheck block all public access
+Next ---> create bucket.
+
+
+Enable cross region replication in mumbai bucket
+--------------------------------------------------
+
+
+Select mumbai bucket --> Management ---> 
+Replication Rules--> Create Replication Rule ---> 
+Enable Bucket versioning ---> Replication Rule Name -  CRR1
+
+Destination bucket --> Sydney bucket  --> Enable versioning --->  ---> IAM Role --> 
+
+( TO establish connection between two regions, we need role )
+
+IAM Role - Create new role 
+Save.
+
+
+
+Now, lets upload object in mumbai  bucket, it will be replicated in sydney bucket!!!!
+
+++++++++++++++++++++++++
+
+
+Transfer Accelaration  ( Have a look at ppt )
+-------------------------
+When we enable transfer accelaration, data will be transferred to edge location and then  from edge location data will be transferred to bucket.
+( Look at the image )
+
+Select mumbai bucket --->Properties ---> Transfer accelaration --->Edit ---> Enabled --- Save Changes.
+
+How can we check the speed?
+---------------------------------------
+Properties -------> Transfer accelaration --> Learn More
+
+ Amazon S3 Transfer Acceleration Speed Comparison tool
+
+
+---> want to compare your data transfer speed by region ( open in new tab )
+
+we can compare
+S3  direct upload speed
+S3 acclerated transfer upload speed.
+In this case, we cannot find much difference.
+But in longer distances, we can find the difference.
+
++++++++++++++++++++++++++
+
+Encryption
+----------------
+There are two types of encryption
+
+1) AES - 256   ( Advanced ENcryption standard )  - Single encryption
+2) AWS - KMS ( Key management service )  - Double encryption  ( More secured )
+
+Select the required encryption.
+
+Select the bucket -- Properties ---Default Encription -- Edit -- Enable
+
++++++++++++++++++++++++
+
+Metadata and Tags
+------------------------
+Metadata -- To provide more information about the object in key-value pairs.
+Keys are predefinied. eg: Content-type, Content-language  etc
+
+tags -- To provide more information about the object in key-value pairs.
+Keys and values we need to provide.
+
+
+Select the object ---> Properties, we can see the metadata and tags.
+
+++++++++++++++++
+
+ACL and Bucket policy
+------------------------
+Select the bucket --> Permissions tab
+ACL Edit -- Add grantee
+Enter canonical ID   -- Save Changes
+
+
+Note: ACL  we can apply  at bucket level and object level
+
+Select the Object and provide the access by entering canonical ID 
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Bucket policy, we can apply only to  bucket.
+
+Select the bucket ---> Permission , We can see bucket policy.
+Bucket Policy are written in JSON Code.
+
+Bucket policy should be definied in JSON code.
+Its the job of AWS administrator.
+
++++++++++++
+Select any object ---> Permissions tab
+Observe: We do not have bucket policy.
+As bucket policy, we need to apply at  bucket level only.
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::don't forget to change me/*"
+        }
+    ]
+}
+
+In this policy:
+
+The "Effect" is "Allow", which means the specified action is allowed.
+The "Principal" is "*", which means the policy applies to all users.
+The "Action" is "s3:GetObject", which means permission is granted for the GetObject operation.
+The "Resource" is "arn:aws:s3:::YourBucketName/*", which means the policy applies to all objects within the specified bucke
+
+++++++++++++++++++++++++++++
+
+
+Life cycle management
+-----------------------------
+Lets create a new bucket
+
+
+Select the bucket --> Management tab --> Create lifecycle  rule
+
+Rule name - Myrule
+This rule applies to all objects  -- I Acknowledge
+Transit  current version of objects between storage classes
+
+Standard 1A  -- 30 Days  
+Add transition
+
+One Zone-IA   -- 60 Days
+
+Create Rule
+
+
+From now,  any object uploaded in the bucket will follow the rule for transition.
+
+++++++++++++++++++++

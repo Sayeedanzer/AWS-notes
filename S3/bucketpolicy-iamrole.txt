@@ -1,0 +1,40 @@
+When granting an Amazon EC2 instance access to an 
+S3 bucket, you typically use an IAM role and associate
+that role with the EC2 instance. The IAM role should 
+have the necessary permissions to access the S3 bucket.
+Below is an example of an S3 bucket policy that grants 
+read access to objects for an IAM role associated with an 
+EC2 instance:
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::your-bucket-name/*"
+    }
+  ]
+}
+
+Make sure to attach this policy to your S3 bucket.
+Additionally, you need to ensure that the IAM role 
+associated with your EC2 instance has the appropriate
+permissions. You can attach this policy directly to 
+the IAM role or use IAM policies to grant the necessary
+permissions.
+
+Here's an example IAM policy that you can attach to 
+the IAM role associated with your EC2 instance:
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::your-bucket-name/*"
+    }
+  ]
+}

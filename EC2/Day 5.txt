@@ -1,0 +1,156 @@
+Auto Scaling
+------------------------
+Auto Scaling helps you ensure that you have the correct number of EC2 instances available 
+to handle the load for your application. 
+You create collections of EC2 instances, 
+called Auto Scaling groups. 
+You can specify the minimum number of instances and the maximum number of instances in Auto Scaling group, and Amazon EC2 Auto Scaling ensures that your group never goes above this size.
+
++++++++++++++++++++++++++
+
+Step 1: Create load balancer.
+Step 2: Create Launch configuration  
+Step 3: Create Topic in SNS ( Simple Notification Service )
+
+
+Step 4: Create Auto scaling group.
+
+Step 5: Create Alarm in CloudWatch
+Step 6: Add Policy in Auto Scaling
+
+------------------------------
+
+
+Step 1: Create load balancer
+Select Mumbai location
+EC 2 dashboard --  load balancer --  create load balancer
+Load balancer Name - SampleLB16
+Next -- Create new Security group 
+Security group name -  Sample-Sg16
+Description - Sample-Sg16
+
+Lets open two ports   SSH  and HTTP
+Next --> Configure health check
+Response timeout -2
+Interval -5
+Uhealthy  threshold - 2
+Healthy threshold  -2
+Next -- Next -- Review and create --> Create---> Close
+
++++++++++++++++++++++++
+
+
+
+
+
+Step 2:
+Creating launch template
+
+Fill the fields as per your requirements
+in the userdata box paste the below script
+
+in advanced Details     User data
+
+
+#!/bin/bash
+sudo su
+yum update -y
+yum install httpd -y
+cd /var/www/html
+echo "MyGoogle-2" > index.html
+service httpd start
+chkconfig httpd on
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Step 3: Create Topic in SNS
+
+Services --   Application Integration  --  Simple Notification Service
+
+Create Topic
+
+Type - Standard	
+
+Name - MyTopic1
+Display Name - MyTopic1
+
+Create topic.
+
+Add subscriptions to the topic
+
+Create Subscription
+Protocol - Email
+
+Endpoint -  samiuddin.adse@gmail.com
+
+Create Subscription.
+
+Confirm the subscription.
+(check your mail and confirm the subscription)
+
++++++++++++++++++++++++
+
+Step 4: Create Auto Scaling Group
+under auto scaling group
+select auto scaling groups
+follow the steps
+
+
+Step 3: Attach Existing Load Balancer ---> 
+Choose from Classic Load Balancers -- Select Load Balancer
+
+
+
+As the desired capacity is 1 ,min 1 and max 3 
+By this time one EC2 Machine could have been created.
+
+
++++++++++++++++++++++++++++++++++++++++
+
+Step 5: Create Alarm in CloudWatch
+
+Services ---- Management & Governance --- CloudWatch
+
+Alarm ---  Create Alarm
+
+Select Metric ---> EC2 --- By Auto Scaling Group ---- Select Auto Scaling Group Name  , Metric Name - CPUUtilization 
+-- Select Metric ---Conditions ---  Static --  Greater than 80 -- Next ---Select  existing SNS topic ( MyTopic1 ) -- Next ---
+Alarm Name -  My_Alarm1 -- Next -- Create Alarm.
+
+
+Similarly Create another Alarm  for CPU Utilization <30
+Name - My_Alarm2
+
+++++++++++++++++++++++++
+
+Step 6: Add Policy in Auto Scaling
+
+Select AutoScaling groups -- Automatic Scaling Tab --- Add Policy
+
+Policy Type - Simple Scaling
+Scaling policy name -- Increase_Policy
+CloudWatch Alarm - My_alarm1
+
+Take the Action - Add - 1  Unit ( EC2 Machine )
+
+Create
+
+Similary, we need to create another Decrease Policy
+
+Scaling policy name -- Decrease_Policy
+CloudWatch Alarm - My_alarm2
+
+Take the Action - Remove - 1  Unit ( EC2 Machine )
+
+Create
+
+++++++++++++++++++++++
+
+Deleting process
+-----------------
+1) Delete Autoscaling
+2) Delele launch configuration ( Instances will be terminated automatically) 
+3) Delete Load balancer
+4) Delete Topic
+5) Delete Alarm
+

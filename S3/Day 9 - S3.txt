@@ -1,0 +1,183 @@
+
+Topics
+-----------
+1) Versioning
+2) Static  website hsoting
+3) classes/ tiers
+4) Cross region replication
+5) Transfer Accelaration
+6) encryption
+7) tags
+8) metadata
+9) ACL
+10) Bucker policies
+11) Life cycle management
+
+
++++++++++++++++++++++++++++++++++++++
+
+
+Create new bucket
+Bucket Name -- version-sfdsafdsafsd
+Region - mumbai
+Next ---> Next ---> un check Block all public access
+Next ---> create bucket.
+
+How to enable versioning ?
+----------------------------------
+Click on the bucket  ---> Properties tab
+( Observation: By default version is disabled )
+
+Edit --- Enable 
+Save Changes.
+
+
+
+Lets upload one object
+-------------------------------
+Create simple text file , content of the file  let it be   "My First Line"
+Upload the file --->  Next --> Grant public access --> Next --> Next ---> Upload
+
+
+First  advantage of versioning
+------------------------------------
+We can recover deleted object.
+
+Lets delete the object.
+Select the check box--> Actions ---> Delete  
+
+How can we recover?
+--------------------------------
+Enable list version
+We can see the object and its delete marker.
+
+
+
+Note:  When we delete, object is not deleted.
+            It is marked as deleted.
+	So, If you remove the delete marker, We will get the  object.
+
+select the delete marker check box --->  Actions ---> Delete --> Delete
+
+Now, Disable list version
+Our object is back!!!
+
+
+
+
+2nd advantage: We can maintain different versions of the file
+----------------------------------------------------------------------------------
+Open the same file in the desktop
+Add another line "My second line"
+
+
+Upload the same file again.
+Get the object URL, and check from brower, we get the latest file.
+
+Where can we see the older versions of the file?
+----------------------------------------------------------
+Show list version
+
+we can see both the versions
+and we can download the older vesions of the file.
+
+Even if you delete the file, we can recover both the versions.
+Select the object --> actions ---> delete ---> delete
+
+select show button
+We can see both the versions of the file.
+
+
+If you delete individual versions,  we cannot recover.
+
+Note: If you delete bucket, we cannot recover.
+Lets delete the bucket.
+
+Now, the dashboard is empty.
+
+++++++++++++++++++++++++++++++++++++++
+Static website hosting
+----------------------------
+
+Lets create a bucket
+Bucket name -  bucket-3454346
+Next ---> Next ---> uncheck  block all public access  --> Next -----> Create bucket.
+
+
+Select the bucket ----> Properties ---> Static website hosting ----> Edit --->Enable -- Host a static website ---
+
+
+index document -   index.html
+error document -  error.html
+Save
+
+
+Now, we need to create index.html  and error.html
+
+Upload index.html  and error.html ---> Next ---> Next ---> Next -- Upload
+ 
+Now, go to the properties of the bucket  ---> Static  website hosting --> get URL of the website ( endpoint )
+
+Note:  Individual files should have public access.
+
+What is the use of error.html?
+----------------------------------
+Incase of any reason, if index.html is not accessible
+then error page will be displayed.
+
+Lets make the index.html page as private.
+select index.html -->ACL --- Edit --> public access -- read - uncheck -- Save Changes
+
+Now, refresh the URL, we get error.html page!!!
+
+Lest Delete the files ---- and Delete the bucket.
+++++++++++++++
+
+
+CRR   ( Cross region replication ) 
+-----------------------------------------
+Lets say, we have two buckets ( 1st bucket in mumbai
+			   2nd  bucket in sydney )
+
+We we upload the object in mumbai,  the object should also be available in sydney ).
+
+As we are replicating an object in another region, it is called cross region replication.
+
+vice-versa will not happen.
+If we delete object in mumbai, it will not be deleted in sydney.
+If we edit object in mumbai, it will not de edited in sydney.
+
+Lets  create  bucket
+bucket name -  mumbai-sfsdfgds
+Region - mumbai
+Next ----> Next ---> uncheck block all public access
+Next ---> create bucket.
+
+
+Lets create 2nd bucket in sydney
+Lets  create  bucket
+bucket name -  sydney-fhgfhfd
+Region - sydney
+Next ----> Next ---> uncheck block all public access
+Next ---> create bucket.
+
+
+Enable cross region replication in mumbai bucket
+--------------------------------------------------
+
+
+Select mumbai bucket --> Management ---> Replication Rules--> Create Replication Rule ---> Enable Bucket versioning ---> Replication Rule Name -  CRR1
+
+ Destination bucket --> Sydney bucket  --> Enable versioning --->  ---> IAM Role --> 
+
+( TO establish connection between two regions, we need role )
+
+IAM Role - Create new role 
+Save.
+
+
+
+Now, lets upload object in mumbai  bucket, it will be replicated in sydney bucket!!!!
+
+++++++++++++++++++++++++
+

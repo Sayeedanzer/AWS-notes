@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ---
+Parameters:
+  NameOfService: 
+Description:
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId:  ami-039e1f129f345d75f
+      Tags:
+        - Key: "name"
+          Value: "MyFirstInstance"
+
+   
+
+
